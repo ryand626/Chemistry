@@ -76,6 +76,7 @@ public class gridManager : MonoBehaviour {
 		myStack.Push (origin);
 		// Add the string's information
 
+		// DFS through point of contact making a list of same colored tiles
 		while (myStack.Count != 0) {
 			origin = myStack.Pop();
 			if(!visited.Contains(origin)){
@@ -117,6 +118,7 @@ public class gridManager : MonoBehaviour {
 				}
 			}
 		}
+		// Cancel units
 		foreach (string numerator in numerators) {
 			foreach(string denominator in denominators){
 				if(numerator == denominator){
@@ -126,6 +128,7 @@ public class gridManager : MonoBehaviour {
 			}
 		}
 
+		// Check to see if the chain was converted to the correct unit
 		bool found = false;
 		int checker = 0;
 		foreach (string numerator in numerators) {
@@ -134,6 +137,10 @@ public class gridManager : MonoBehaviour {
 			}
 			checker ++;
 		}
+
+		// TODO: only set found to true if checker is 1
+
+		// Destroy the chain when you converted the chain correctly
 		if (found == true) {
 			foreach (GameObject thing in visited) {
 				Destroy(thing);
