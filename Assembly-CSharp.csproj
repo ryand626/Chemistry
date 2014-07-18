@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\collide.cs" />
      <Compile Include="Assets\Scripts\gridManager.cs" />
      <Compile Include="Assets\Scripts\hexGrid.cs" />
+     <Compile Include="Assets\Scripts\hoverZoom.cs" />
      <Compile Include="Assets\Scripts\realign.cs" />
      <Compile Include="Assets\Scripts\shoot.cs" />
      <Compile Include="Assets\Scripts\testHex.cs" />

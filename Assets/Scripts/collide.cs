@@ -48,7 +48,6 @@ public class collide : MonoBehaviour {
 				// newHex.transform.GetComponent<testHex>().Initiate();
 
 				// Destroy the evidence
-				StoichUnits.setGoal("blue");
 				StoichUnits.setOrigin(newHex);
 				StoichUnits.setGrid(true);
 

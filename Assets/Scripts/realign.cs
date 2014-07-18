@@ -66,8 +66,8 @@ public class realign : MonoBehaviour {
 		dNumWidth = Dint.renderer.bounds.size.x;
 
 		// DEBUG
-		print ("Numerator: " + nLabelPos + " " + nLabelWidth + ", " + nNumPos + " " + nNumWidth);
-		print ("Denominator: " + dLabelPos + " " + dLabelWidth + ", " + dNumPos + " " + dNumWidth);
+		//print ("Numerator: " + nLabelPos + " " + nLabelWidth + ", " + nNumPos + " " + nNumWidth);
+		//print ("Denominator: " + dLabelPos + " " + dLabelWidth + ", " + dNumPos + " " + dNumWidth);
 
 		// Calculate the total width of the numerator text and number, plus the buffer space in between
 		totalWidth = nNumWidth + nLabelWidth + bufferDistance * (numerator.text.Length + Nint.text.Length); 

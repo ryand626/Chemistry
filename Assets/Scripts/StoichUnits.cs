@@ -24,9 +24,9 @@ public static class StoichUnits {
 		origin = newOrigin;
 	}
 
-	public static string goal;
-	public static void setGoal(string newGoal){
-		goal = newGoal;
+	public static string[] goal = new string[4];
+	public static void setGoal(int index, string newGoal){
+		goal[index] = newGoal;
 	}
 
 

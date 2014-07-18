@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 public class gridManager : MonoBehaviour {
 
-	// GOAL INFO
 	// Goal Text
+	TextMesh[] GoalText = new TextMesh[4];
 	public TextMesh RedGoal;
 	public TextMesh GreenGoal;
 	public TextMesh YellowGoal;
 	public TextMesh BlueGoal;
-	// Goal text
+	// GOAL INFO
+	string[] Goalgoal = new string[4];
 	private string rGoal;
 	private string gGoal;
 	private string yGoal;
@@ -26,9 +27,23 @@ public class gridManager : MonoBehaviour {
 	private ArrayList visited = new ArrayList();
 	private Stack <GameObject> myStack = new Stack<GameObject>();
 
+	ArrayList denominatorsToDestroy = new ArrayList ();
+	ArrayList numeratorsToDestroy = new ArrayList ();
+	
 	// Initialization
 	void Start () {
 		StoichUnits.setGrid (false);
+
+		GoalText[0] = RedGoal;
+		GoalText[1] = GreenGoal;
+		GoalText[2] = YellowGoal;
+		GoalText[3] = BlueGoal;
+
+		Goalgoal[0] = rGoal;
+		Goalgoal[1] = gGoal;
+		Goalgoal[2] = yGoal;
+		Goalgoal[3] = bGoal;
+
 		Transform[] allChildren = GetComponentsInChildren<Transform>();
 		foreach (Transform child in allChildren) {
 			// set the color of all hexagons in the grid to random colors
@@ -46,12 +61,13 @@ public class gridManager : MonoBehaviour {
 		}
 
 		// Setup Goals
-		ChooseGoal (RedGoal, rGoal);
-		ChooseGoal (GreenGoal, gGoal);
-		ChooseGoal (BlueGoal, bGoal);
-		ChooseGoal (YellowGoal, yGoal);
+		ChooseGoal (RedGoal, rGoal, 0);
+		ChooseGoal (GreenGoal, gGoal, 1);
+		ChooseGoal (BlueGoal, bGoal, 2);
+		ChooseGoal (YellowGoal, yGoal, 3);
 	}
 
+	// Update the grid if 
 	void Update(){
 		if (StoichUnits.gridUpdate) {
 			blank();
@@ -59,41 +75,42 @@ public class gridManager : MonoBehaviour {
 		}
 	}
 
-	// pick a random color between cyan, green, red, and yellow
-	Color pickColor(){
-		Color returnColor;
-		switch(Mathf.RoundToInt(Random.Range(0,5))){
-		case 0:
-			returnColor =  Color.cyan;
-			break;
-		case 1:
-			returnColor = Color.green;
-			break;
-		case 2:
-			returnColor = Color.red;
-			break;
-		default:
-			returnColor = Color.yellow;
-			break;
-		}
-		return returnColor;
+	// TODO: have something randomy assign a new unit goal to the Units that exist
+	void ChooseGoal(TextMesh goalText, string oldGoal, int index){
+		oldGoal = StoichUnits.units[Random.Range(0, StoichUnits.units.GetLength(0)-1),0];
+		goalText.text = oldGoal;
+		StoichUnits.setGoal(index, oldGoal);
 	}
-
+	
+	// Blank the lists used for the DFS
 	void blank(){
 		visited.Clear ();
 		numerators.Clear ();
 		denominators.Clear ();
 		Nints.Clear ();
 		Dints.Clear ();
+		myStack.Clear ();
 	}
 
-	// TODO: have something randomy assign a new unit goal to the Units that exist
-	void ChooseGoal(TextMesh goalText, string oldGoal){
-		oldGoal = StoichUnits.units[Random.Range(0, StoichUnits.units.GetLength(0)-1),0];
-		goalText.text = oldGoal;
-	}
 
-	IEnumerator updateGrid(GameObject origin, string goal){
+	IEnumerator updateGrid(GameObject origin, string[] goal){
+		if (!origin) {
+			yield return null;
+		}
+		// Make sure the goal is for the correctly colered hex
+		int goalIndex = 0;
+		Color color = origin.gameObject.transform.FindChild("hexSprite").GetComponent<SpriteRenderer>().material.color;
+
+		if(color == Color.red){
+			goalIndex = 0;
+		}else if (color == Color.green) {
+			goalIndex = 1;
+		}else if (color == Color.blue) {
+			goalIndex = 2;
+		}else if (color == Color.yellow) {
+			goalIndex = 3;
+		}
+
 		origin.transform.parent = gameObject.transform;
 		yield return new WaitForSeconds (.5f);
 		StoichUnits.setGrid (false);
@@ -102,7 +119,7 @@ public class gridManager : MonoBehaviour {
 		// Add the string's information
 
 		// DFS through point of contact making a list of same colored tiles
-		while (myStack.Count != 0) {
+		while (myStack.Count != 0 && origin != null) {
 			origin = myStack.Pop();
 			if(!visited.Contains(origin)){
 				visited.Add(origin);
@@ -143,21 +160,39 @@ public class gridManager : MonoBehaviour {
 				}
 			}
 		}
+
+
 		// Cancel units
 		foreach (string numerator in numerators) {
 			foreach(string denominator in denominators){
 				if(numerator == denominator){
-					numerators.Remove(numerator);
-					denominators.Remove(denominator);
+					numeratorsToDestroy.Add(numerator);
+					denominatorsToDestroy.Add(denominator);
 				}
 			}
+		}
+
+		foreach (string deletor in denominatorsToDestroy) {
+			denominators.Remove(deletor);
+		}
+
+		foreach (string deletor in numeratorsToDestroy) {
+			numerators.Remove(deletor);
 		}
 
 		// Check to see if the chain was converted to the correct unit
 		bool found = false;
 		int checker = 0;
+
+		print("Searching for " + goal[goalIndex]);
+
+		denominatorsToDestroy.Clear ();
+		numeratorsToDestroy.Clear ();
+
 		foreach (string numerator in numerators) {
-			if(numerator == goal){
+			print("Numerator " + numerator);
+			if(numerator == goal[goalIndex]){
+				print("NUMERATOR: " + numerator);
 				found = true;
 			}
 			checker ++;
@@ -170,9 +205,30 @@ public class gridManager : MonoBehaviour {
 			foreach (GameObject thing in visited) {
 				Destroy(thing);
 			}
+			//ChooseGoal(GoalText[goalIndex],Goalgoal[goalIndex],goalIndex);
 		}
 
-
+		blank ();
 		yield return null;
+	}
+
+	// pick a random color between cyan, green, red, and yellow
+	Color pickColor(){
+		Color returnColor;
+		switch(Mathf.RoundToInt(Random.Range(0,5))){
+		case 0:
+			returnColor =  Color.cyan;
+			break;
+		case 1:
+			returnColor = Color.green;
+			break;
+		case 2:
+			returnColor = Color.red;
+			break;
+		default:
+			returnColor = Color.yellow;
+			break;
+		}
+		return returnColor;
 	}
 }
