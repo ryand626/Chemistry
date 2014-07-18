@@ -5,6 +5,11 @@ public static class StoichUnits {
 	// Provide random units
 	public static bool canShoot;
 
+	// Unit Labels
+	public static string[,] units = {{"mg","g"},{"kg","g"},{"mL","cm^3"},{"L","mL"}};
+	// Unit conversion rates
+	public static string[,] conversions = {{"1000",""},{"","1000"},{"",""},{"","1000"}};
+
 	public static void setShoot(bool newCanShoot){
 		canShoot = newCanShoot;
 	}
@@ -26,31 +31,11 @@ public static class StoichUnits {
 
 
 	public static void RandomUnit(TextMesh numerator, TextMesh denominator, TextMesh Nint, TextMesh Dint){
-		switch (Mathf.RoundToInt(Random.Range (0, 5))) {
-		case 0:
-			numerator.text = "blue";
-			Nint.text = "1000";
-			denominator.text = "kg";
-			Dint.text = "";
-			break;
-		case 1:
-			numerator.text = "mg";
-			Nint.text = "1000";
-			denominator.text = "g";
-			Dint.text = "";
-			break;
-		case 2:
-			numerator.text = "mL";
-			Nint.text = "";
-			denominator.text = "cm cubed";
-			Dint.text = "";
-			break;
-		default:
-			numerator.text = "mg";
-			Nint.text = "3";
-			denominator.text = "mol";
-			Dint.text = "";
-			break;
-		}
+		int randNum = Random.Range (0,units.GetLength (0));
+		numerator.text = units[randNum,0];
+		denominator.text = units [randNum, 1];
+
+		Nint.text = conversions [randNum, 0];
+		Dint.text = conversions [randNum, 1];
 	}
 }

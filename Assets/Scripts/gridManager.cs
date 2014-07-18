@@ -4,6 +4,19 @@ using System.Collections.Generic;
 
 public class gridManager : MonoBehaviour {
 
+	// GOAL INFO
+	// Goal Text
+	public TextMesh RedGoal;
+	public TextMesh GreenGoal;
+	public TextMesh YellowGoal;
+	public TextMesh BlueGoal;
+	// Goal text
+	private string rGoal;
+	private string gGoal;
+	private string yGoal;
+	private string bGoal;
+
+
 	private Color tempColor;
 
 	private ArrayList numerators = new ArrayList ();
@@ -31,6 +44,12 @@ public class gridManager : MonoBehaviour {
 
 			}
 		}
+
+		// Setup Goals
+		ChooseGoal (RedGoal, rGoal);
+		ChooseGoal (GreenGoal, gGoal);
+		ChooseGoal (BlueGoal, bGoal);
+		ChooseGoal (YellowGoal, yGoal);
 	}
 
 	void Update(){
@@ -66,6 +85,12 @@ public class gridManager : MonoBehaviour {
 		denominators.Clear ();
 		Nints.Clear ();
 		Dints.Clear ();
+	}
+
+	// TODO: have something randomy assign a new unit goal to the Units that exist
+	void ChooseGoal(TextMesh goalText, string oldGoal){
+		oldGoal = StoichUnits.units[Random.Range(0, StoichUnits.units.GetLength(0)-1),0];
+		goalText.text = oldGoal;
 	}
 
 	IEnumerator updateGrid(GameObject origin, string goal){
